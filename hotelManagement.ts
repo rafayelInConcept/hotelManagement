@@ -52,11 +52,11 @@ class GuestsManager {
 }
 
 class RoomsGuestsTracker {
-  private roomGuests: Map<number, Map<string, Guest>>;
+  private roomGuests: Map<number, {startDate: Date, endDate: Date, guests: Guest[]}[]>;
 
-  addGuestToRoom(roomNumber: number, guests: Guest[]): boolean;
+  addGuestToRoom(roomNumber: number, guests: Guest[], startDate: Date, endDate: Date): boolean;
   removeGuestFromRoom(roomNumber: number, guestIds: string[]): boolean;
-  removeAllGuests(roomNumber: number, guests: Guest[]);
+  removeAllGuests(roomNumber: number);
 }
 
 // using RoomNumberTracker create room numbers in ascending order;
@@ -73,6 +73,7 @@ enum RoomAvailability {
   AVAILABLE,
   CHECKED_IN,
   RESERVED,
+  BLOCKED,
 }
 
 // RoomAvailabilityManager is a tracker for room availability for specific periods
@@ -85,14 +86,14 @@ class RoomAvailabilityManager {
       endDate: Date;
     }[]
   >;
-  public setRoomStatus(
+  public setRoomStatusForDates(
     roomNumber: number,
     status: RoomAvailability,
     startDate: Date,
     endDate: Date
   ): boolean;
   public getCurrentRoomStatus(roomNumber: number): RoomAvailability;
-  public getRoomStatus(
+  public getRoomStatuses(
     roomNumber: number,
     startDate?: Date,
     endDate?: number
@@ -132,15 +133,18 @@ enum PaymentTypes {
 }
 
 class PaymentTracker {
-  private payments: Map<number, { isPayed: boolean; type: PaymentTypes }>;
+  private payments: Map<number, { isPayed: boolean; type: PaymentTypes, startDate: Date, endDate: Date }[]>;
 
   createPayment(
     roomNumber: number,
     type: PaymentTypes,
-    status: boolean
+    status: boolean,
+    startDate: Date,
+    endDate: Date
   ): boolean {}
-  changePaymentType(roomNumber: number, type: PaymentTypes): boolean;
-  processPayment(roomNumber: number, type: PaymentTypes): boolean;
+  changePaymentType(roomNumber: number, type: PaymentTypes, startDate: Date, endDate: Date): boolean;
+  deletePayment(roomNumber: number, startDate: Date, endDate: Date): boolean;
+  processPayment(roomNumber: number, type: PaymentTypes, startDate: Date, endDate: Date): boolean;
 }
 
 class HotelManagement {
@@ -162,22 +166,29 @@ class HotelManagement {
     startDate: Date,
     endDate: Date
   ): boolean {
+    // check availability of room for specific dates from _roomAvailabilityManager
     // check payment status based on type
-    // check availability of room from _roomService
     // add Guests if not exist using _guestsManager
-    // add guests to room using _roomsGuestsTracker
-    // change availability status using _roomAvailabilityManager
+    // add guests to room for specific dates using _roomsGuestsTracker
+    // change availability status for specific dates using _roomAvailabilityManager
   }
-  checkIn(roomNumber: number, guests: Guest[], until: Date): boolean {
-    // check availability of room from _roomService
+  unbook(roomNumber: number, startDate: Date, endDate: Date): boolean {
+    // get guests of room for given dates from _roomsGuestsTracker and delete that record
+    // remove room availability record for given dates
+    // remove guests
+    // remove payment if exist
+  }
+  checkIn(roomNumber: number, guests: Guest[], endDate: Date): boolean {
+    // check availability of room for given dates from _roomAvailabilityManager
+    // if reserved check the guests list from _roomsGuestsTracker
     // check payment status based on type
     // add Guests if not exist using _guestsManager
     // add guests to room using _roomsGuestsTracker
-    // change availability status using _roomAvailabilityManager
+    // change availability status using _roomAvailabilityManager for given dates
   }
   checkOut(roomNumber: number): boolean {
-    // delete Guests using _guestsManager
-    // remove guests from room using _roomsGuestsTracker
+    // delete Guests using _guestsManager for current date
+    // remove guests from room using _roomsGuestsTracker for current date
     // remove availability status until current date using _roomAvailabilityManager
   }
 }
