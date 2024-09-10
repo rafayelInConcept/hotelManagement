@@ -56,7 +56,7 @@ class RoomsGuestsTracker {
 
   addGuestToRoom(roomNumber: number, guests: Guest[], startDate: Date, endDate: Date): boolean;
   removeGuestFromRoom(roomNumber: number, guestIds: string[]): boolean;
-  removeAllGuests(roomNumber: number);
+  removeAllGuests(roomNumber: number): boolean;
 }
 
 // using RoomNumberTracker create room numbers in ascending order;
@@ -66,7 +66,7 @@ class RoomNumberTracker {
 
   public getLastRoomNumber(): number;
   public getNewRoomNumber(): number;
-  static get Instance(): RoomNumberTracker;
+  static get instance(): RoomNumberTracker;
 }
 
 enum RoomAvailability {
@@ -96,7 +96,7 @@ class RoomAvailabilityManager {
   public getRoomStatuses(
     roomNumber: number,
     startDate?: Date,
-    endDate?: number
+    endDate?: Date,
   ): RoomAvailability;
   public changeStatusForDates(
     roomNumber: number,
@@ -133,7 +133,7 @@ enum PaymentTypes {
 }
 
 class PaymentTracker {
-  private payments: Map<number, { isPayed: boolean; type: PaymentTypes, startDate: Date, endDate: Date }[]>;
+  private payments: Map<number, { isPaid: boolean; type: PaymentTypes, startDate: Date, endDate: Date }[]>;
 
   createPayment(
     roomNumber: number,
@@ -162,7 +162,7 @@ class HotelManagement {
   }
   book(
     roomNumber: number,
-    guest: Guest[],
+    guests: Guest[],
     startDate: Date,
     endDate: Date
   ): boolean {
