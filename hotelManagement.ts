@@ -103,12 +103,12 @@ class RoomAvailabilityManager {
     status: RoomAvailability,
     startDate: Date,
     endDate: Date
-  );
+  ): boolean;
   public removeStatusForDates(
     roomNumber: number,
     startDate: Date,
     endDate: Date
-  );
+  ): boolean;
 }
 
 // service for CRD rooms
@@ -156,7 +156,7 @@ class HotelManagement {
     private _paymentTracker: PaymentTracker
   );
 
-  getAllAvailableRoms(startDate: Date, endDate: Date): Room[] {
+  getAllAvailableRooms(startDate: Date, endDate: Date): Room[] {
     // iterate through all available rooms from _roomService
     // check their availability for current dates using _roomAvailabilityManager
   }
